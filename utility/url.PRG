@@ -15,26 +15,26 @@
 *=======================================================================
 CLEAR
 LOCAL x
-x=CREATEOBJECT("url","http://foo.com/virtual/bar.xyz?x=1&y=2&z=3")
+x=CREATEOBJECT( "url", "http://foo.com/virtual/bar.xyz?x=1&y=2&z=3" )
 ?x.getURL()
-x.AddElement("test","1")
+x.AddElement( "test", "1" )
 ?x.getURL()
-x.AddElement("y","4")
+x.AddElement( "y", "4" )
 ?x.getURL()
 ?"nelements=", x.nElements
-?"First element=", x.getValue(1)
-?"y=", x.getvalue("y")
+?"First element=", x.getValue( 1 )
+?"y=", x.getvalue( "y" )
 ? "===================="
 LOCAL lni
 FOR lni= 1 TO x.nElements
-  ?x.getAttribute(lni), "=", x.getValue(lni)
+  ?x.getAttribute( lni ), "=", x.getValue( lni )
 ENDFOR
 ? "===================="
-x.Coalesce("http://zzz.org?x=Override&z=55&new=great")
+x.Coalesce( "http://zzz.org?x=Override&z=55&new=great" )
 ?x.getURL()
 ? "===================="
-x.RemoveElement(1)
-x.RemoveElement("z")
+x.RemoveElement( 1 )
+x.RemoveElement( "z" )
 ?x.getURL()
 *=======================================================================
 
@@ -48,11 +48,11 @@ cElementDelimiter = CHR( 38 )
 cBaseDelimiter = "?"
 nElements = 0
 
-
 *=====================================
 * URL::
 FUNCTION INIT( tcURL )
 *=====================================
+tcURL= EVL( NVL(tcURL,""), "")
 aElements = ""
 This.LoadURL( tcURL )
 RETURN
@@ -82,9 +82,15 @@ FOR lni = 1 TO ALEN( This.aElements, 1 )
     ENDIF
     lcRetVal = lcRetVal+ TRANSFORM( This.aElements[ lni, 1 ] )+ "="+ TRANSFORM( This.aElements[ lni, 2 ] )
   ELSE
-    lcRetVal = lcRetVal+ TRANSFORM( This.aElements[ lni, 1 ] )
+    lcRetVal = lcRetVal+ TRANSFORM( EVL( This.aElements[ lni, 1 ], "" ) )
   ENDIF
 ENDFOR
+IF lcRetVal = This.cBaseDelimiter
+  lcRetVal = ""
+ENDIF
+IF RIGHT( lcRetVal, LEN( This.cBaseDelimiter )) = This.cBaseDelimiter
+  lcRetVal= SUBSTR(lcRetVal, 1, LEN( lcRetVal ) - LEN( This.cBaseDelimiter ))
+ENDIF
 RETURN lcRetVal
 
 *=====================================
